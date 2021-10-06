@@ -1,0 +1,23 @@
+title Exercise 0.6 : Posting a note in SPA mode
+
+note over browser
+User submits form. Default submit is 
+replaced by a custom JS function. The 
+function adds the new note on the 
+browser side as a new LIST element to 
+the DOM for display. Then it sends 
+an asymmetric HTTP POST Request to the 
+server to add it on the server side.
+end note
+
+
+browser->server: HTTP POST URL=new_note_spa,  Type=application/json, Body= { content: "", date: "" }
+
+note over server
+Server adds the new note sends an 
+answer in JSON format indicating
+that the note was created
+end note
+
+server->browser: Status Code=201 {"message":"note created"}
+
