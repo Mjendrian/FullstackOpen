@@ -1,4 +1,5 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 
 // Composant to Show the input Form to add new Contacts
 const Form = (params) => {
@@ -51,13 +52,8 @@ const Persons = ({ persons }) => {
 }
 
 // Main App Composant
-const App = () => {
-  const [ persons, setPersons ] = useState([
-    { name: 'Arto Hellas', number : "0123456789", id : 0 },
-    { name: 'Ada Lovelace', number: '39-44-5323523', id: 1 },
-    { name: 'Dan Abramov', number: '12-43-234345', id: 2 },
-    { name: 'Mary Poppendieck', number: '39-23-6423122', id: 3 }
-  ]) 
+const App = () => {  
+  const [ persons, setPersons ] = useState([])
 
   // State for Name Input Field
   const [ newName, setNewName ] = useState('')
@@ -65,6 +61,14 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   // State for Name filter Input Field
   const [ newNameFilter, setNewNameFilter ] = useState('')
+
+  useEffect(() => {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        setPersons(response.data)
+      })
+  }, [])
 
   // Handler for Name Input Field
   const handleNameChange = (event) => {
