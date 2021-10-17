@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons.js'
 
 // Composant to Show the input Form to add new Contacts
 const Form = (params) => {
@@ -38,13 +38,13 @@ const Filter = (props) => {
 }
 
 // Composant to Show the Number list
-const Persons = ({ persons }) => {
+const Persons = ({ persons, deletePerson }) => {
   return (
     <div>
       <h2>Numbers</h2>
       <ul>
         { persons.map(person => 
-          <li key={ person.id }>{ person.name } : { person.number }</li>
+          <li key={ person.id }>{ person.name } : { person.number } <button onClick={ () => deletePerson(person.id) }>Remove</button></li>
         ) }
       </ul>
     </div>     
@@ -62,13 +62,13 @@ const App = () => {
   // State for Name filter Input Field
   const [ newNameFilter, setNewNameFilter ] = useState('')
 
-  useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        setPersons(response.data)
-      })
-  }, [])
+  useEffect(() => {    
+    personService      
+      .getAll()      
+      .then(initialPersons => {        
+        setPersons(initialPersons)    
+    })  
+  }, [])  
 
   // Handler for Name Input Field
   const handleNameChange = (event) => {
@@ -99,29 +99,66 @@ const App = () => {
     }
   ]
 
+  // Function to update a Contact
+  const updatePerson = (person, newNumber) => {
+    const newPerson = { ...person, number: newNumber }
+  
+    personService      
+    .update(newPerson.id, newPerson)      
+    .then(returnedPerson => {        
+      setPersons(persons.map(mappedPerson => mappedPerson.id !== newPerson.id ? mappedPerson : returnedPerson))
+      setNewName('')   
+      setNewNumber('')        
+    })
+
+  }
+
   // Function to add a new Contact
   const addPerson = (event) => {    
     event.preventDefault()
-    if (persons.find(person => person.name === newName)) {
-      alert(`The name ${newName} is already added to phonebook`)
+    const person = persons.find(person => person.name === newName)
+    if (person && person.number === newNumber) {
+      alert(`The contact ${newName} with the number ${newNumber} does already exist in the phonebook.`)
       return 
-    }
-    if (persons.find(person => person.number === newNumber)) {
-      alert(`The number ${newNumber} does already exist in the phonebook`)
-      return 
+    } else if (persons.find(person => person.name === newName) && newNumber !== "") {
+      const result = window.confirm(`The contact ${newName} is already present with the number ${person.number}. Do you want to update the number ?`)
+      if (result === true) {
+        updatePerson(person, newNumber)
+        return
+      }else{
+        return 
+      }
     }
 
     if( newName === "" || newNumber === "") return
     const personObject = {
       name: newName,
-      number : newNumber,
-      id: persons.length + 1,
+      number : newNumber
     }
+
+    personService      
+    .create(personObject)      
+    .then(returnedPerson => {        
+      setPersons(persons.concat(returnedPerson))        
+      setNewName('')   
+      setNewNumber('')   
+    })    
   
-    setPersons(persons.concat(personObject))
-    setNewName('')
-    setNewNumber('')
   }  
+
+  // Function to delete an existant contact
+  const deletePerson = (id) => {
+    console.log(`Contact to delete : ${id}`)
+    const result = window.confirm(`Do you really want to delete the Contact ${persons.find(person => person.id === id).name } ?`)
+    if(result !== true) 
+      return
+    personService      
+    .delPerson(id)      
+    .then(returnedPerson => {        
+      console.log(returnedPerson);
+      setPersons(persons.filter(person => person.id !== id))        
+    })    
+  }
 
   // Name Filter application
   const personsToShow = newNameFilter === ""
@@ -132,7 +169,7 @@ const App = () => {
     <div>
       <Form inputFields={ inputFields } submitAction={ addPerson }/>
       <Filter value={ newNameFilter } onChange={ handleNameFilterChange } />
-      <Persons persons={ personsToShow } />
+      <Persons persons={ personsToShow } deletePerson={ deletePerson } />
       
     </div>
   )

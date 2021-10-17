@@ -1,24 +1,54 @@
 {
-  "persons":[
-    { 
-      "name": "Arto Hellas", 
+  "persons": [
+    {
+      "name": "Arto Hellas",
       "number": "040-123456",
       "id": 1
     },
-    { 
-      "name": "Ada Lovelace", 
+    {
+      "name": "Ada Lovelace",
       "number": "39-44-5323523",
       "id": 2
     },
-    { 
-      "name": "Dan Abramov", 
+    {
+      "name": "Dan Abramov",
       "number": "12-43-234345",
       "id": 3
     },
-    { 
-      "name": "Mary Poppendieck", 
+    {
+      "name": "Mary Poppendieck",
       "number": "39-23-6423122",
       "id": 4
+    },
+    {
+      "name": "HAha Solo",
+      "number": "15641650",
+      "id": 6
+    },
+    {
+      "name": "Baba Rhum",
+      "number": "9111065",
+      "id": 7
+    },
+    {
+      "name": "Baba Rhum",
+      "number": "9111065 ",
+      "id": 8
+    },
+    {
+      "name": "Baba Rhum",
+      "number": "91110654",
+      "id": 9
+    },
+    {
+      "name": "Pika",
+      "number": "9151652",
+      "id": 10
+    },
+    {
+      "name": "a",
+      "number": "77",
+      "id": 11
     }
   ]
 }
