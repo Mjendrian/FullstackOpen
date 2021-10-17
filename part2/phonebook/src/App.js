@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import personService from './services/persons.js'
+import './index.css'
 
 // Composant to Show the input Form to add new Contacts
 const Form = (params) => {
@@ -51,6 +52,19 @@ const Persons = ({ persons, deletePerson }) => {
   )
 }
 
+const Notification = ({ notification }) => {
+
+  if (notification.message === null) {
+    return null
+  }
+
+  return (
+    <div className={ notification.type }>
+      {notification.message}
+    </div>
+  )
+}
+
 // Main App Composant
 const App = () => {  
   const [ persons, setPersons ] = useState([])
@@ -61,6 +75,8 @@ const App = () => {
   const [ newNumber, setNewNumber ] = useState('')
   // State for Name filter Input Field
   const [ newNameFilter, setNewNameFilter ] = useState('')
+  // State for Notification
+  const [notification, setNotification] = useState({ message : null, type : 'success' , duration : 3 })
 
   useEffect(() => {    
     personService      
@@ -107,8 +123,17 @@ const App = () => {
     .update(newPerson.id, newPerson)      
     .then(returnedPerson => {        
       setPersons(persons.map(mappedPerson => mappedPerson.id !== newPerson.id ? mappedPerson : returnedPerson))
+      const notification = {message : `The contact information for ${returnedPerson.name} has been updated.`, type : 'success' }
+      setNotification(notification)  
+      setTimeout(() => setNotification({ message : null, type : null }), 3000) 
       setNewName('')   
       setNewNumber('')        
+    })
+    .catch(error => {
+      const notification = {message : `The contact ${person.name} has already been deleted from the server.`, type : 'error' }
+      setNotification(notification)  
+      setTimeout(() => setNotification({ message : null, type : null }), 3000)
+      setPersons(persons.filter(mappedPerson => mappedPerson.id !== person.id)) 
     })
 
   }
@@ -141,22 +166,27 @@ const App = () => {
     .then(returnedPerson => {        
       setPersons(persons.concat(returnedPerson))        
       setNewName('')   
-      setNewNumber('')   
+      setNewNumber('')
+      const notification = {message : `The contact ${returnedPerson.name} has been added to the phonebook.`, type : 'success' }
+      setNotification(notification)  
+      setTimeout(() => setNotification({ message : null, type : null }), 3000) 
     })    
   
   }  
 
   // Function to delete an existant contact
   const deletePerson = (id) => {
-    console.log(`Contact to delete : ${id}`)
-    const result = window.confirm(`Do you really want to delete the Contact ${persons.find(person => person.id === id).name } ?`)
+    const personToRemove = persons.find(person => person.id === id)
+    const result = window.confirm(`Do you really want to delete the Contact ${personToRemove.name } ?`)
     if(result !== true) 
       return
     personService      
     .delPerson(id)      
     .then(returnedPerson => {        
-      console.log(returnedPerson);
-      setPersons(persons.filter(person => person.id !== id))        
+      const notification = {message : `The contact ${personToRemove.name} has been deleted from the phonebook.`, type : 'success' }
+      setNotification(notification)  
+      setTimeout(() => setNotification({ message : null, type : null }), 3000)
+      setPersons(persons.filter(person => person.id !== id))         
     })    
   }
 
@@ -167,6 +197,7 @@ const App = () => {
 
   return (
     <div>
+      <Notification notification={notification}/>
       <Form inputFields={ inputFields } submitAction={ addPerson }/>
       <Filter value={ newNameFilter } onChange={ handleNameFilterChange } />
       <Persons persons={ personsToShow } deletePerson={ deletePerson } />
