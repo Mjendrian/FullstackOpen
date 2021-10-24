@@ -130,10 +130,17 @@ const App = () => {
       setNewNumber('')        
     })
     .catch(error => {
-      const notification = {message : `The contact ${person.name} has already been deleted from the server.`, type : 'error' }
-      setNotification(notification)  
+      console.log(error.response)
+      if(error.response.status === 400) {
+        console.log(error)
+        const notification = {message : `The contact ${person.name} has already been deleted from the server.`, type : 'error' }
+        setNotification(notification)
+        setPersons(persons.filter(mappedPerson => mappedPerson.id !== person.id))
+      } else if (error.response.status === 500) {
+        const notification = {message : error.response.data.error, type : 'error' }
+        setNotification(notification)
+      }   
       setTimeout(() => setNotification({ message : null, type : null }), 3000)
-      setPersons(persons.filter(mappedPerson => mappedPerson.id !== person.id)) 
     })
 
   }
@@ -170,6 +177,11 @@ const App = () => {
       const notification = {message : `The contact ${returnedPerson.name} has been added to the phonebook.`, type : 'success' }
       setNotification(notification)  
       setTimeout(() => setNotification({ message : null, type : null }), 3000) 
+    })
+    .catch( err => {
+      console.log(err.response)
+      const notification = {message : err.response.data.error, type : 'error' }
+      setNotification(notification)
     })    
   
   }  
