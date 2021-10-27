@@ -147,7 +147,7 @@ describe('most likes', () => {
   })
 
   test('One blog gives first Author', () => {
-    expect(mostLikes( oneBlog )).toEqual( { author: 'Author1', blogs: 1 } )
+    expect(mostLikes( oneBlog )).toEqual( { author: 'Author1', likes: 0 } )
   })
 
   test('Two blogs with first Author having most likes gives first Author', () => {

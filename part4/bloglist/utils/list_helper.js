@@ -1,4 +1,3 @@
-const { forEach } = require('lodash')
 const lodash = require('lodash')
 
 const dummy = (blogs) => {
@@ -41,13 +40,20 @@ const mostLikes = (blogs) => {
   if(!blogs || blogs.length === 0) {
     return {}
   } else {
-    const authorBlogs = lodash.groupBy( blogs, 'author' )
-    const blogCollections = lodash.values(authorBlogs)
-    console.log(blogCollections)
+    // Create an object with ( "Author1":"likes", "Author2":"likes" )
+    const reducer = (authors, blog) => {
+      (authors[blog.author] ? authors[blog.author] = authors[blog.author] + blog.likes : authors[blog.author] = blog.likes)
+      return authors
+    }
+   
+    const authors = blogs.reduce(reducer, {})
+    console.log(authors)
+    const authorWithMaxLikes = Object.keys(authors).reduce((authorA, authorB) => (authors[authorA] >= authors[authorB]) ? authorA : authorB)
+    console.log( authorWithMaxLikes )
     // To Do
     // const likesByAuthor = blogCollections.map(blog => { return { author: blog.author, likes: blog.likes }})
     // const likesByAuthor = blogCollections
-    return ( { author: '', likes: 12 } )
+    return ( { author: authorWithMaxLikes, likes: authors[authorWithMaxLikes] } )
   }
 }
 
