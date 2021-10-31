@@ -45,14 +45,11 @@ const mostLikes = (blogs) => {
       (authors[blog.author] ? authors[blog.author] = authors[blog.author] + blog.likes : authors[blog.author] = blog.likes)
       return authors
     }
-   
+
     const authors = blogs.reduce(reducer, {})
-    console.log(authors)
+
     const authorWithMaxLikes = Object.keys(authors).reduce((authorA, authorB) => (authors[authorA] >= authors[authorB]) ? authorA : authorB)
-    console.log( authorWithMaxLikes )
-    // To Do
-    // const likesByAuthor = blogCollections.map(blog => { return { author: blog.author, likes: blog.likes }})
-    // const likesByAuthor = blogCollections
+
     return ( { author: authorWithMaxLikes, likes: authors[authorWithMaxLikes] } )
   }
 }

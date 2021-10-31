@@ -1,0 +1,5 @@
+
+> bloglist@0.0.1 test
+> cross-env NODE_ENV=test jest --verbose --runInBand "valid" "note" "can" "be" "added'," "async" "()" "="
+
+Terminer le programme de commandes (O/N)ÿ? 
