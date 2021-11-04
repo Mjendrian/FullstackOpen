@@ -101,8 +101,6 @@ describe('reading blogs', () => {
       .set('Authorization', authToken)
       .expect(200)
 
-    console.log(response.body)
-
     // The test only works when using the API to crete blogs.
     expect(response.body.user.name).toBe( helper.initialUsers[0].name)
   })

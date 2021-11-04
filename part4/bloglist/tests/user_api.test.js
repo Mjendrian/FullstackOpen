@@ -45,7 +45,6 @@ describe('Consultation with users in base', () => {
 
 
     const authToken = `bearer ${loginData.body.token}`
-    console.log(loginData.body)
 
     await api
       .post('/api/blogs')

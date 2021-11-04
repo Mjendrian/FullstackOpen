@@ -1,6 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
+require('../models/user')
 const jwt = require('jsonwebtoken')
 
 // List all Blogs
@@ -25,7 +25,6 @@ blogsRouter.post('/', async (request, response) => {
 
   // We get the User from the Token
   const token = request.token
-  console.log(token)
   const decodedToken = jwt.verify(token, process.env.SECRET)
   if (!token || !decodedToken.id) {
     return response.status(401).json({
@@ -55,7 +54,6 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.delete('/:id', async (request, response) => {
 
   const token = request.token
-  console.log(token)
   const decodedToken = jwt.verify(token, process.env.SECRET)
   if (!token || !decodedToken.id) {
     return response.status(401).json({
