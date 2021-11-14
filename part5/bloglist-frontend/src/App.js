@@ -23,7 +23,7 @@ const App = () => {
   // States for Blog control
   const [blogs, setBlogs] = useState([])
   // States for Login control
-  const [username, setUsername] = useState('')   
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   // State for Notification
@@ -38,10 +38,10 @@ const App = () => {
       const user = await loginService.login({
         username, password,
       })
-  
-      window.localStorage.setItem(        
-        'loggedBloglistUser', JSON.stringify(user)      
-      )       
+
+      window.localStorage.setItem(
+        'loggedBloglistUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -52,13 +52,13 @@ const App = () => {
     return true
   }
 
-    // Logout handler
+  // Logout handler
   const handleLogout = (event) => {
     event.preventDefault()
     try {
-      window.localStorage.removeItem(        
-        'loggedBloglistUser'     
-      )       
+      window.localStorage.removeItem(
+        'loggedBloglistUser'
+      )
       blogService.setToken('')
       setUser(null)
     } catch (exception) {
@@ -79,11 +79,11 @@ const App = () => {
       return true
     } catch ( exception ) {
       console.log(exception.response.status)
-      handleNotification(exception.response.data.error, 'error')
+      handleNotification('Unable to add a Blog', 'error')
       if(exception.response.status === 401) {
-        window.localStorage.removeItem(        
-          'loggedBloglistUser'     
-        )       
+        window.localStorage.removeItem(
+          'loggedBloglistUser'
+        )
         blogService.setToken('')
         setUser(null)
       }
@@ -100,14 +100,14 @@ const App = () => {
       setSortedBlogs(blogs.map(mappedBlog => mappedBlog.id !== incBlog.id ? mappedBlog : blog))
       return true
     } catch ( exception ) {
-      
+      return false
     }
   }
 
   const deleteBlog = async (blogToRemove) => {
     try {
 
-      const deletedBlog = await blogService.remove({
+      await blogService.remove({
         ...blogToRemove
       })
       handleNotification(`The blog ${blogToRemove.title} has been deleted.`, 'success')
@@ -117,40 +117,44 @@ const App = () => {
       console.log(exception.response.status)
       handleNotification(exception.response.data.error, 'error')
       if(exception.response.status === 401) {
-        window.localStorage.removeItem(        
-          'loggedBloglistUser'     
-        )       
+        window.localStorage.removeItem(
+          'loggedBloglistUser'
+        )
         blogService.setToken('')
         setUser(null)
       }
-      return false 
+      return false
     }
   }
 
   // Notification handler
   const handleNotification = (message, type) => {
     const notification = { message : message, type : type }
-        setNotification(notification)
-        setTimeout(() => setNotification({ message : null, type : null }), 3000)
+    setNotification(notification)
+    setTimeout(() => setNotification({ message : null, type : null }), 3000)
   }
 
   const setSortedBlogs = (blogs) => {
-    const sortedBlogs = blogs.sort((blogA, blogB) => (blogB.likes - blogA.likes));
+    const sortedBlogs = ( blogs.length > 0 ? blogs.sort((blogA, blogB) => (blogB.likes - blogA.likes)) : {} )
+
     setBlogs(sortedBlogs)
   }
 
-  useEffect(() => {
-    blogService.getAll().then(blogs =>
+  useEffect ( () => {
+    try {
+      const blogs = blogService.getAll()
       setSortedBlogs( blogs )
-    )  
+    } catch( exception ) {
+      handleNotification('Unable to fetch the blogs', 'error')
+    }
   }, [])
 
-  useEffect(() => {    
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')    
-    if (loggedUserJSON) {      
-      const user = JSON.parse(loggedUserJSON)      
-      setUser(user)      
-      blogService.setToken(user.token)    
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBloglistUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
     }  }, [])
 
   if (user === null) {
@@ -178,25 +182,25 @@ const App = () => {
             />
           </div>
           <button type="submit">login</button>
-        </form>              
+        </form>
       </div>
     )
   }
 
   return (
     <div>
-      <h2>Blogs</h2> 
+      <h2>Blogs</h2>
       <Notification notification={notification} />
       <form onSubmit={handleLogout}>
-        <p>{user.name} logged-in 
+        <p>{user.name} logged-in
           <button type="submit">logout</button>
         </p>
       </form>
       <br/>
       <Togglable buttonLabel="Add a blog" cancelButtonLabel="Cancel" ref={blogFormRef}>
-      <BlogForm 
-              createBlog={addBlog}
-            />       
+        <BlogForm
+          createBlog={addBlog}
+        />
       </Togglable>
 
       {blogs.map(blog =>

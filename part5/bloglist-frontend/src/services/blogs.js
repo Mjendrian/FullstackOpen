@@ -3,44 +3,48 @@ const baseUrl = '/api/blogs'
 
 let token = null
 
-const setToken = newToken => {  
+const setToken = newToken => {
   token = `bearer ${newToken}`
 }
 
 // Get a list with all blogs
-const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => response.data)
+const getAll = async () => {
+  try {
+    const response = await axios.get(baseUrl)
+    return response.data
+  } catch ( timeout ) {
+    return  {}
+  }
 }
 
 // Create a new blog
 const create = async newObject => {
-  const config = {    
-    headers: { Authorization: token },  
+  const config = {
+    headers: { Authorization: token },
   }
-  const response = await axios.post(baseUrl, newObject, config)  
+  const response = await axios.post(baseUrl, newObject, config)
   return response.data
 }
 
 // Increment the likes of one blog
 const incLikes = async newObject => {
-  const config = {    
-    headers: { Authorization: token },  
+  const config = {
+    headers: { Authorization: token },
   }
   const url = `${baseUrl}/${newObject.id}`
-  const response = await axios.put(url, newObject, config)  
+  const response = await axios.put(url, newObject, config)
   return response.data
 }
 
 // Delete one blog
 const remove = async newObject => {
   console.log('Got a delete')
-  const config = {    
-    headers: { Authorization: token },  
+  const config = {
+    headers: { Authorization: token },
   }
   const url = `${baseUrl}/${newObject.id}`
   console.log(url)
-  const response = await axios.delete(url, config)  
+  const response = await axios.delete(url, config)
   return response.data
 }
 

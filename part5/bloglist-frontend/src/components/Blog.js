@@ -1,4 +1,4 @@
-import React, {useState, useRef} from 'react'
+import React, { useState } from 'react'
 import { Togglable } from './Utils'
 
 const Blog = ({ blog, incBlogLikes, user, deleteBlog }) => {
@@ -11,10 +11,10 @@ const Blog = ({ blog, incBlogLikes, user, deleteBlog }) => {
   }
 
   const incLikes = async (blog) => {
-    
-    const blogLikeIncremented = await incBlogLikes({
+
+    await incBlogLikes({
       id: blog.id,
-      likes : "+1"
+      likes : '+1'
     })
 
   }
@@ -36,22 +36,22 @@ const Blog = ({ blog, incBlogLikes, user, deleteBlog }) => {
   return (
     <div style={blogStyle}>
       {blog.title} {' '}
-      <Togglable buttonLabel="Show details" cancelButtonLabel="Hide" key={blog.id}>   
-        <br/>{blog.url} 
-        <br/>{blog.likes}{' '} <button onClick={() => incLikes(blog)}>like</button> 
+      <Togglable buttonLabel="Show details" cancelButtonLabel="Hide" key={blog.id}>
+        <br/>{blog.url}
+        <br/>{blog.likes}{' '} <button onClick={() => incLikes(blog)}>like</button>
         <br/>{blog.author}
         {buttonDelete()}
       </Togglable>
     </div>
-    
-)}
+
+  )}
 
 const BlogForm = ({
   createBlog
 }) => {
-  const [author, setAuthor] = useState('') 
-  const [title, setTitle] = useState('') 
-  const [url, setUrl] = useState('') 
+  const [author, setAuthor] = useState('')
+  const [title, setTitle] = useState('')
+  const [url, setUrl] = useState('')
 
   const addBlog = async (event) => {
     event.preventDefault()
@@ -97,9 +97,9 @@ const BlogForm = ({
           onChange={({ target }) => setUrl(target.value)}
         />
       </div>
-    <button type="submit">Create</button>
-  </form>      
+      <button type="submit">Create</button>
+    </form>
   )
 }
 
-export { Blog, BlogForm } 
+export { Blog, BlogForm }
