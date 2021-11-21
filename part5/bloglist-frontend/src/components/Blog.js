@@ -11,16 +11,22 @@ const Blog = ({ blog, incBlogLikes, user, deleteBlog }) => {
   }
 
   const incLikes = async (blog) => {
+    try {
+      await incBlogLikes({
+        id: blog.id,
+        likes : '+1'
+      })
 
-    await incBlogLikes({
-      id: blog.id,
-      likes : '+1'
-    })
+    } catch (exception) {
+      console.log(exception)
+    }
 
   }
 
   const delBlog = async (blog) => {
 
+    const confirm = window.confirm(`Do you really wnt to delete the blog ${blog.setTitle}`)
+    if(confirm === false) return true
     await deleteBlog({
       id: blog.id
     })
@@ -28,18 +34,19 @@ const Blog = ({ blog, incBlogLikes, user, deleteBlog }) => {
   }
 
   const buttonDelete = () => {
-    if (blog.user && user.id === blog.user.id) {
+
+    if (blog.user && user && user.id === blog.user.id) {
       return <button onClick={() => delBlog(blog)} >Delete Blog</button>
     }
   }
 
   return (
-    <div style={blogStyle}>
-      {blog.title} {' '}
+    <div style={blogStyle} className='blogList'>
+      {blog.title} {' '} {blog.author}
       <Togglable buttonLabel="Show details" cancelButtonLabel="Hide" key={blog.id}>
         <br/>{blog.url}
-        <br/>{blog.likes}{' '} <button onClick={() => incLikes(blog)}>like</button>
-        <br/>{blog.author}
+        <br/>Likes : {blog.likes}{' '} <button onClick={() => incLikes(blog)}>like</button>
+        <br/>{blog.user ? blog.user.name: ''} {blog.user ? blog.user.name : ''}
         {buttonDelete()}
       </Togglable>
     </div>
@@ -76,6 +83,7 @@ const BlogForm = ({
           type="text"
           value={author}
           name="Author"
+          id="author"
           onChange={({ target }) => setAuthor(target.value)}
         />
       </div>
@@ -85,6 +93,7 @@ const BlogForm = ({
           type="title"
           value={title}
           name="Title"
+          id="title"
           onChange={({ target }) => setTitle(target.value)}
         />
       </div>
@@ -94,6 +103,7 @@ const BlogForm = ({
           type="url"
           value={url}
           name="Url"
+          id="url"
           onChange={({ target }) => setUrl(target.value)}
         />
       </div>

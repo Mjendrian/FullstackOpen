@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Blog, BlogForm } from './components/Blog'
+// import { LoginForm } from './components/LoginForm'
 import { Togglable } from './components/Utils'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -100,6 +101,15 @@ const App = () => {
       setSortedBlogs(blogs.map(mappedBlog => mappedBlog.id !== incBlog.id ? mappedBlog : blog))
       return true
     } catch ( exception ) {
+      console.log(exception.response.status)
+      handleNotification('Unable to add the like', 'error')
+      if(exception.response.status === 401) {
+        window.localStorage.removeItem(
+          'loggedBloglistUser'
+        )
+        blogService.setToken('')
+        setUser(null)
+      }
       return false
     }
   }
@@ -135,17 +145,19 @@ const App = () => {
   }
 
   const setSortedBlogs = (blogs) => {
-    const sortedBlogs = ( blogs.length > 0 ? blogs.sort((blogA, blogB) => (blogB.likes - blogA.likes)) : {} )
+    const sortedBlogs = ( blogs.length > 0 ? blogs.sort((blogA, blogB) => (blogB.likes - blogA.likes)) : [] )
 
     setBlogs(sortedBlogs)
   }
 
-  useEffect ( () => {
+  useEffect ( async () => {
     try {
-      const blogs = blogService.getAll()
+      const blogs = await blogService.getAll()
+      console.log(blogs)
       setSortedBlogs( blogs )
     } catch( exception ) {
       handleNotification('Unable to fetch the blogs', 'error')
+      setSortedBlogs( [] )
     }
   }, [])
 
@@ -166,6 +178,7 @@ const App = () => {
           <div>
             username
             <input
+              id="username"
               type="text"
               value={username}
               name="Username"
@@ -175,13 +188,14 @@ const App = () => {
           <div>
             password
             <input
+              id="password"
               type="password"
               value={password}
               name="Password"
               onChange={({ target }) => setPassword(target.value)}
             />
           </div>
-          <button type="submit">login</button>
+          <button id="login" type="submit">login</button>
         </form>
       </div>
     )

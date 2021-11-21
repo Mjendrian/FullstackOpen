@@ -12,8 +12,8 @@ const getAll = async () => {
   try {
     const response = await axios.get(baseUrl)
     return response.data
-  } catch ( timeout ) {
-    return  {}
+  } catch ( exception ) {
+    return  []
   }
 }
 
@@ -27,12 +27,14 @@ const create = async newObject => {
 }
 
 // Increment the likes of one blog
+// TODO : Need to fix bug on like which removes user from the blog
 const incLikes = async newObject => {
   const config = {
     headers: { Authorization: token },
   }
   const url = `${baseUrl}/${newObject.id}`
   const response = await axios.put(url, newObject, config)
+
   return response.data
 }
 
