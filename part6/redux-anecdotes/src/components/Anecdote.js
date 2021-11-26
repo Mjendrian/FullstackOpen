@@ -30,11 +30,9 @@ const AnecdoteList = () => {
   const voteForAnecdote = (anecdote) => {
     try {
       dispatch(vote(anecdote.id))
-      dispatch(notifySuccess(`You voted for : ${ anecdote.content }`))
-      setTimeout(() => dispatch(notifyHide()), 5000)
+      dispatch(notifySuccess(`You voted for : ${ anecdote.content }`, 10))
     } catch(exception) {
-      dispatch(notifyError(`An error occured while registrating your vote for : ${ anecdote.content }`))
-      setTimeout(() => dispatch(notifyHide()), 5000)
+      dispatch(notifyError(`An error occured while registrating your vote for : ${ anecdote.content }`, 10))
     }
   }
 

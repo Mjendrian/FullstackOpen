@@ -12,12 +12,10 @@ const NewAnecdote = (props) => {
       const content = event.target.anecdote.value
       event.target.anecdote.value = ''
       dispatch(createAnecdote(content))
-      dispatch(notifySuccess(`You created the Anecdote : ${ content }`))
-      setTimeout(() => dispatch(notifyHide()), 5000)
+      dispatch(notifySuccess(`You created the Anecdote : ${ content }`, 10))
     } catch (exception) {
       const content = event.target.anecdote.value
-      dispatch(notifyError(`An error occured while creating : ${ content }`))
-      setTimeout(() => dispatch(notifyHide()), 5000)
+      dispatch(notifyError(`An error occured while creating : ${ content }`, 10))
     }
   }
 

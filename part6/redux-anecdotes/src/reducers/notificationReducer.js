@@ -18,24 +18,33 @@ const notificationReducer = (state = initialNotification, action) => {
   }
 }
 
-export const notifySuccess = (notification) => {
-  return {
-    type: 'NOTIFY_SUCCESS',
-    message : notification
+export const notifySuccess = (notification, timeout) => {
+  return async dispatch => {
+    dispatch({
+      type: 'NOTIFY_SUCCESS',
+      message : notification
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'NOTIFY_HIDE',
+        message : ''
+      })
+    }, timeout * 1000);
   }
 }
 
-export const notifyError = (notification) => {
-  return {
-    type: 'NOTIFY_ERROR',
-    message : notification
-  }
-}
-
-export const notifyHide = () => {
-  return {
-    type: 'NOTIFY_HIDE',
-    message : ''
+export const notifyError = (notification, timeout) => {
+  return async dispatch => {
+    dispatch({
+      type: 'NOTIFY_ERROR',
+      message : notification
+    })
+    setTimeout(() => {
+      dispatch({
+        type: 'NOTIFY_HIDE',
+        message : ''
+      })
+    }, timeout * 1000);
   }
 }
 
