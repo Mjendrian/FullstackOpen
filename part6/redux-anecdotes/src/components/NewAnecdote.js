@@ -1,21 +1,20 @@
 import React from 'react'
-import { useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 import { createAnecdote } from '../reducers/anecdoteReducer'
-import { notifyError, notifySuccess, notifyHide } from '../reducers/notificationReducer'
+import { notifyError, notifySuccess } from '../reducers/notificationReducer'
 
 const NewAnecdote = (props) => {
-  const dispatch = useDispatch()
 
   const addAnecdote = (event) => {
     try {
       event.preventDefault()
       const content = event.target.anecdote.value
       event.target.anecdote.value = ''
-      dispatch(createAnecdote(content))
-      dispatch(notifySuccess(`You created the Anecdote : ${ content }`, 10))
+      props.createAnecdote(content)
+      props.notifySuccess(`You created the Anecdote : ${ content }`, 5)
     } catch (exception) {
       const content = event.target.anecdote.value
-      dispatch(notifyError(`An error occured while creating : ${ content }`, 10))
+      props.notifyError(`An error occured while creating : ${ content }`, 5)
     }
   }
 
@@ -32,4 +31,6 @@ const NewAnecdote = (props) => {
   )
 }
 
-export default NewAnecdote
+const ConnectedNewAnecdote = connect(null, { createAnecdote, notifySuccess, notifyError })(NewAnecdote)
+
+export default ConnectedNewAnecdote

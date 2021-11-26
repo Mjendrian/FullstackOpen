@@ -1,7 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { vote } from '../reducers/anecdoteReducer'
-import { notifyError, notifySuccess, notifyHide } from '../reducers/notificationReducer'
+import { notifyError, notifySuccess } from '../reducers/notificationReducer'
 
 const Anecdote = ({ anecdote, vote }) => {
   return(
@@ -30,9 +30,9 @@ const AnecdoteList = () => {
   const voteForAnecdote = (anecdote) => {
     try {
       dispatch(vote(anecdote.id))
-      dispatch(notifySuccess(`You voted for : ${ anecdote.content }`, 10))
+      dispatch(notifySuccess(`You voted for : ${ anecdote.content }`, 5))
     } catch(exception) {
-      dispatch(notifyError(`An error occured while registrating your vote for : ${ anecdote.content }`, 10))
+      dispatch(notifyError(`An error occured while registrating your vote for : ${ anecdote.content }`, 5))
     }
   }
 

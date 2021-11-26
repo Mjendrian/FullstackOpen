@@ -1,8 +1,6 @@
 import anecdoteService from '../services/anecdotes'
 
 const reducer = (state = [], action) => {
-  console.log('state now: ', state)
-  console.log('action', action)
 
   switch(action.type) {
     case 'NEW_ANECDOTE' :
@@ -13,7 +11,6 @@ const reducer = (state = [], action) => {
       const returnedAnecdotes = state.map(anecdote =>
         anecdote.id !== action.data.id ? anecdote : action.data 
       )
-      console.log(returnedAnecdotes)
       return returnedAnecdotes
     default :
       return state
