@@ -5,16 +5,23 @@ const jwt = require('jsonwebtoken')
 
 // List all Blogs
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', { name : 1 })
+  const blogs = await Blog.find({})
+    .populate('user', { name : 1 })
+    .populate('comments', { comment : 1 })
+    
+
   response.json(blogs)
 })
 
 // Show one Blog
-blogsRouter.get('/:id', async (request, response) => {
-  const blog = await Blog.findById(request.params.id).populate('user', { name : 1 })
+blogsRouter.get('/:blogId', async (request, response) => {
+  const blog = await Blog.findById(request.params.blogId)
+    .populate('user', { name : 1 })
+    .populate('comments', { comment : 1 })
   if(blog) {
     response.json(blog)
   } else {
+    console.log('Blog not found')
     response.status(404).end()
   }
 })
@@ -46,7 +53,9 @@ blogsRouter.post('/', async (request, response) => {
 
   userObj.blogs = userObj.blogs.concat(savedBlog._id)
 
-  const blogToReturn = await Blog.findOne(savedBlog._id).populate('user', { name : 1 })
+  const blogToReturn = await Blog.findOne(savedBlog._id)
+    .populate('user', { name : 1 })
+    .populate('comments', { comment : 1 })
 
   await userObj.save()
 
@@ -54,7 +63,7 @@ blogsRouter.post('/', async (request, response) => {
 })
 
 // Delete a Blog
-blogsRouter.delete('/:id', async (request, response) => {
+blogsRouter.delete('/:blogId', async (request, response) => {
 
   const token = request.token
   const decodedToken = jwt.verify(token, process.env.SECRET)
@@ -65,7 +74,7 @@ blogsRouter.delete('/:id', async (request, response) => {
   }
   const userObj = request.user
 
-  if(!userObj.blogs.includes(request.params.id)) {
+  if(!userObj.blogs.includes(request.params.blogId)) {
     return response.status(401).json({
       error: 'L\'action est limitée au propriétaire du Blog'
     })
@@ -76,7 +85,7 @@ blogsRouter.delete('/:id', async (request, response) => {
 })
 
 // Update a Blog (likes incriment by 1, if we receive +X)
-blogsRouter.put('/:id', async (request, response) => {
+blogsRouter.put('/:blogId', async (request, response) => {
   const body = request.body
 
   const blog = (body.likes[0] === '+')
@@ -91,8 +100,11 @@ blogsRouter.put('/:id', async (request, response) => {
       likes: body.likes
     }
 
-  const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, blog, { new: true })
-  const returnedBlog = await Blog.findOne(updatedBlog._id).populate('user', { name : 1 })
+  const updatedBlog = await Blog.findByIdAndUpdate(request.params.blogId, blog, { new: true })
+  const returnedBlog = await Blog.findOne(updatedBlog._id)
+    .populate('user', { name : 1 })
+    .populate('comments', { comment : 1 })
+
   response.json(returnedBlog)
 })
 
