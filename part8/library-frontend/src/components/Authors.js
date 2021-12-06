@@ -4,7 +4,7 @@ import Select from 'react-select';
 import { useMutation } from '@apollo/client' 
 import { EDIT_AUTHOR, ALL_BOOKS, ALL_AUTHORS } from '../queries'
 
-const Authors = ({show, authors}) => {
+const Authors = ({show, authors, token}) => {
 
   if (!show || authors.length === 0) {
     return null
@@ -33,7 +33,7 @@ const Authors = ({show, authors}) => {
           )}
         </tbody>
       </table>
-      <AuthorAgeForm authors={authors} />
+      {(token === null ? '' : <AuthorAgeForm authors={authors} />)}
 
     </div>
   )
